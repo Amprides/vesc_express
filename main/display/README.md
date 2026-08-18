@@ -12,6 +12,20 @@ function that is connected to the LispBM extensions `disp-render`,
 reset functions are the display dependent interface that are
 implemented per display.
 
+# Directory structure
+
+The `main/display` directory owns the complete display subsystem, not only
+panel drivers:
+
+* `disp_<panel>.c/.h` contains controller-specific panel drivers.
+* `lispif_disp_extensions.c/.h` exposes display drivers to LispBM.
+* `display_backend.c/.h` is the shared runtime interface used by panel
+  drivers, LispBM and LVGL. It keeps the active panel operations, geometry,
+  pixel format and invalidation-alignment requirements in one place.
+
+Board-specific power, GPIO and startup sequencing remains in the matching
+`main/hwconf` target.
+
 # Adding new panels with esp_lcd
 
 New display drivers should use the `esp_lcd` component-based flow (see
@@ -328,6 +342,27 @@ After loading this driver, these helper extensions are available:
 
 * `ext-disp-cmd` - send a raw display command with optional parameters.
 * `ext-disp-orientation` - set rotation (`0`, `1`, `2`, `3`).
+
+## co5300 (Waveshare ESP32-S3 Touch AMOLED 1.75)
+
+* Resolution: 466 * 466
+* Colors: 16Bit RGB565
+* Interface: QSPI (SD0, SD1, SD2, SD3, CLK, CS)
+* Panel driver: `disp_co5300.c/.h`
+* Hardware target: `main/hwconf/waveshare/amoled_175_esp32s3`
+
+The Waveshare target initializes this driver automatically after enabling the
+AMOLED power rails through the AXP2101. It is not loaded with a
+`disp-load-co5300` LispBM command because the panel wiring and power sequence
+are fixed by the board hardware configuration.
+
+The target runs the CO5300 QSPI bus at 80 MHz and applies the panel's six-pixel
+column offset. The shared display backend also reports the even-pixel
+invalidation alignment required by this controller, preventing shifted byte
+windows and visible tearing during LVGL partial updates.
+
+The driver supports direct RGB565 drawing, LispBM display callbacks, LVGL
+rendering and AMOLED brightness control.
 
 ## gc9a01
 

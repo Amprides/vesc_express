@@ -152,7 +152,7 @@ set(COMPONENT_ADD_INCLUDEDIRS
 "drivers"
 "drivers/bme280"
 "drivers/imu"
-"hwconf/waveshare/amoled_175"
+"hwconf/waveshare/amoled_175_esp32s3"
 "lowzip"
 )
 

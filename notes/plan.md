@@ -245,7 +245,7 @@ display_backend
 Add a dedicated `hwconf`, for example conceptually:
 
 ```text
-main/hwconf/.../waveshare_amoled_175/
+main/hwconf/waveshare/amoled_175_esp32s3/
 ```
 
 That defines:
